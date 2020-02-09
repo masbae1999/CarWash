@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,7 +64,7 @@ public class HomeAct extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_tools, R.id.nav_share, R.id.nav_send, R.id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         View navHeader = navigationView.getHeaderView(0);
@@ -74,35 +72,40 @@ public class HomeAct extends AppCompatActivity {
         nav_Email_Address = navHeader.findViewById(R.id.nav_EmailAddress);
         nav_Photo = navHeader.findViewById(R.id.nav_Photo);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        //menu pojok kiri
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+
         NavigationUI.setupWithNavController(navigationView, navController);
+
 
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(username_key_new);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("full_name")){
+                if (dataSnapshot.hasChild("full_name")) {
                     nav_Fullname.setText(dataSnapshot.child("full_name").getValue().toString());
-                }else{
+                } else {
                     nav_Fullname.setText("Your Name");
                 }
-                if (dataSnapshot.hasChild("email_address")){
+                if (dataSnapshot.hasChild("email_address")) {
                     nav_Email_Address.setText(dataSnapshot.child("email_address").getValue().toString());
-                }else{
+                } else {
                     nav_Email_Address.setText("yourmail@mail.com");
                 }
-                if (dataSnapshot.hasChild("url_photo_profile")){
+                if (dataSnapshot.hasChild("url_photo_profile")) {
                     Picasso.with(HomeAct.this).load(dataSnapshot.child("url_photo_profile").getValue().toString())
                             .centerCrop().fit().into(nav_Photo);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        /*navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
@@ -116,18 +119,18 @@ public class HomeAct extends AppCompatActivity {
                 }
                 return true;
             }
-        });
+        });*/
 
     }//selesai onCreate
 
-    @Override
+    @Override //menu pojok kanan atas
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
 
-    @Override
+    @Override //klikable menu pojok kiri
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
